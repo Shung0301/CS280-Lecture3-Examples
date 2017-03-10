@@ -32,6 +32,7 @@ namespace Example03
         {
             this.order = new Order();
             this.order.Customer = this.customer;
+            RenderScreen();
         }
 
         private void product1Button_Click(object sender, EventArgs e)
@@ -52,19 +53,40 @@ namespace Example03
             this.orderButton.Text = "點餐";
             this.product1Button.Text = "豆漿";
             this.product2Button.Text = "油條";
+            this.payButton.Text = "結帳";
             if (this.order != null)
             {
-                string orderDetail = string.Empty;
-                orderDetail = string.Format("點餐明細:\n");
-                float total = 0.0f;
-                foreach (Product product in this.order.ProductList)
-                {
-                    orderDetail += string.Format("{0}: {1}元", product.Name, product.Price);
-                    total = total + product.Price;
-                }
-                orderDetail += string.Format("結帳金額:{0}", total);
-                this.orderRichTextBox.Text = orderDetail;
+                product1Button.Enabled = true;
+                product2Button.Enabled = true;
+                orderButton.Enabled = false;
+                this.orderRichTextBox.Text = order.OrderDetail();
             }
+            else
+            {
+                product1Button.Enabled = false;
+                product2Button.Enabled = false;
+                orderButton.Enabled = true;
+                this.orderRichTextBox.Text = string.Empty;
+            }
+        }
+
+        private void payButton_Click(object sender, EventArgs e)
+        {
+            product1Button.Enabled = false;
+            product2Button.Enabled = false;
+            orderButton.Enabled = true;
+
+            MessageBox.Show(string.Format("{0}, 結帳金額:{1}，謝謝惠顧", this.order.Customer.Name, this.order.GetTotal()));
+
+            this.order = null;
+            RenderScreen();
+        }
+
+        private void tablecomboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int SelectedIndex = tablecomboBox.SelectedIndex;
+            this.customer.Name = tablecomboBox.Items[SelectedIndex].ToString() + "桌";
+            RenderScreen();
         }
     }
 }
